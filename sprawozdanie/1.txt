@@ -1,0 +1,621 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{polski}
+\usepackage{fancyhdr} % Required for custom headers
+\usepackage{lastpage} % Required to determine the last page for the footer
+\usepackage{extramarks} % Required for headers and footers
+\usepackage[usenames,dvipsnames]{color} % Required for custom colors
+\usepackage{graphicx} % Required to insert images
+\usepackage{listings} % Required for insertion of code
+\usepackage{courier} % Required for the courier font
+\usepackage[onelanguage]{algorithm2e}
+\usepackage{pgfplots}
+\pgfplotsset{width=10cm,compat=1.9}
+\usepgfplotslibrary{external}
+
+% Margins
+\topmargin=-0.45in
+\evensidemargin=0in
+\oddsidemargin=0in
+\textwidth=6.5in
+\textheight=9.0in
+\headsep=0.25in
+\usepackage{tikz}
+\usetikzlibrary{calc}
+\linespread{1.1} % Line spacing
+
+% Set up the header and footer
+\pagestyle{fancy}
+\lhead{\hmwkAuthorName} % Top left header
+\chead{\hmwkClass\ \hmwkTitle} % Top center head
+\rhead{\firstxmark} % Top right header
+\lfoot{\lastxmark} % Bottom left footer
+\cfoot{} % Bottom center footer
+\rfoot{Strona\ \thepage\ z\ \protect\pageref{LastPage}} % Bottom right footer
+\renewcommand\headrulewidth{0.4pt} % Size of the header rule
+\renewcommand\footrulewidth{0.4pt} % Size of the footer rule
+
+\setlength\parindent{0pt} % Removes all indentation from paragraphs
+%----------------------------------------------------------------------------------------
+%	DOCUMENT STRUCTURE COMMANDS
+%	Skip this unless you know what you're doing
+%----------------------------------------------------------------------------------------
+
+% Header and footer for when a page split occurs within a problem environment
+\newcommand{\enterProblemHeader}[1]{
+}
+
+% Header and footer for when a page split occurs between problem environments
+\newcommand{\exitProblemHeader}[1]{
+\nobreak\extramarks{#1 (continued)}{#1 continued on next page\ldots}\nobreak
+\nobreak\extramarks{#1}{}\nobreak
+}
+
+\setcounter{secnumdepth}{0} % Removes default section numbers
+\newcounter{homeworkProblemCounter} % Creates a counter to keep track of the number of problems
+
+\newcommand{\homeworkProblemName}{}
+\newenvironment{homeworkProblem}[1][Zadanie \arabic{homeworkProblemCounter}]{ % Makes a new environment called homeworkProblem which takes 1 argument (custom name) but the default is "Problem #"
+\stepcounter{homeworkProblemCounter} % Increase counter for number of problems
+\renewcommand{\homeworkProblemName}{#1} % Assign \homeworkProblemName the name of the problem
+\section{\homeworkProblemName} % Make a section in the document with the custom problem count
+\enterProblemHeader{\homeworkProblemName} % Header and footer within the environment
+}{
+\exitProblemHeader{\homeworkProblemName} % Header and footer after the environment
+}
+
+\newcommand{\problemAnswer}[1]{ % Defines the problem answer command with the content as the only argument
+\noindent\framebox[\columnwidth][c]{\begin{minipage}{0.98\columnwidth}#1\end{minipage}} % Makes the box around the problem answer and puts the content inside
+}
+
+\newcommand{\homeworkSectionName}{}
+\newenvironment{homeworkSection}[1]{ % New environment for sections within homework problems, takes 1 argument - the name of the section
+\renewcommand{\homeworkSectionName}{#1} % Assign \homeworkSectionName to the name of the section from the environment argument
+\subsection{\homeworkSectionName} % Make a subsection with the custom name of the subsection
+\enterProblemHeader{\homeworkProblemName\ [\homeworkSectionName]} % Header and footer within the environment
+}{
+\enterProblemHeader{\homeworkProblemName} % Header and footer after the environment
+}
+
+%----------------------------------------------------------------------------------------
+%	NAME AND CLASS SECTION
+%----------------------------------------------------------------------------------------
+
+\newcommand{\hmwkTitle}{Lista nr 3} % Assignment title
+\newcommand{\hmwkDueDate}{Niedziela, 26 Listopada 2017} % Due date
+\newcommand{\hmwkClass}{OBLICZENIA NAUKOWE} % Course/class
+\newcommand{\hmwkAuthorName}{Tymoteusz Surynt} % Your name
+\renewcommand*\contentsname{Podsumowanie}
+
+%----------------------------------------------------------------------------------------
+%	TITLE PAGE
+%----------------------------------------------------------------------------------------
+
+\title{
+\vspace{2in}
+\textmd{\textbf{\hmwkClass:\ \hmwkTitle}}\\
+\normalsize\vspace{0.1in}\small{\hmwkDueDate}\\
+\vspace{3in}
+}
+
+\author{\textbf{\hmwkAuthorName}}
+\date{Numer indeksu: 229794} % Insert date here if you want it to appear below your name
+
+%----------------------------------------------------------------------------------------
+
+\begin{document}
+
+\maketitle
+
+%----------------------------------------------------------------------------------------
+%	TABLE OF CONTENTS
+%----------------------------------------------------------------------------------------
+
+%\setcounter{tocdepth}{1} % Uncomment this line if you don't want subsections listed in the ToC
+
+\newpage
+\tableofcontents
+\newpage
+
+%----------------------------------------------------------------------------------------
+%	PROBLEM 1
+%----------------------------------------------------------------------------------------
+
+% To have just one problem per page, simply put a \clearpage after each problem
+
+\begin{homeworkProblem}
+%opis problemu
+\subsection{Opis problemu}
+Celem zadania było stworzenie funkcji, która będzie w stanie znajdować miejsca zerowe metodą bisekcji.
+%opis rozwiązania
+\subsection{Opis rozwiązania}
+\begin{algorithm}[H]
+ \SetKwInput{KwData}{Dane}
+ \KwData{
+ \\f - funkcja dla, której szukamy miejsca zerowego\\
+ a,b - przedział, między którym szukamy miejsca zerowego\\
+ delta,epsilon - dokładność obliczeniowa
+ }
+ \SetKwInput{KwResult}{Wynik}
+ \KwResult{
+	(r,v,ut,err)\\ 
+	r - przybliżennie pierwsiastka\\
+	v- wartość funkcji w punkcie r\\
+	it - liczba iteracji\\
+	err - jeśli err=1 to wiemy, że funkcja nie zmieniła znaku w podanym przedziale\\\\
+ }
+ \SetKwInput{TitleOfAlgo}{Funkcja}
+ \TitleOfAlgo{mbisekcji($f, a::Float64, b::Float64, delta::Float64, epsilon::Float64$)}
+ $it \leftarrow 1$\;
+ $u \leftarrow f(a)$\;
+ $v \leftarrow f(b)$\;
+ $e \leftarrow b-a$\;
+ \If{$u*v>0$}{
+ 	\KwRet{$a, f(a), it, 1$}
+ }
+ \While{ture}{
+  $e \leftarrow e/2$\;
+  $c \leftarrow a+e/2$\;
+  $w \leftarrow f(c)$\;
+  \If{$|e|<delta$ or $|w|<epsilon$}{
+  	\KwRet{$c, w, it, 0$}
+  }
+  \eIf{$w*u<0$}{
+   		$b \leftarrow c$\;
+   		$v \leftarrow w$\;
+   }{
+   		$a \leftarrow c$\;
+   		$u \leftarrow w$\;
+  }
+  $it \leftarrow it+1$\;
+ }
+ \caption{Metoda Bisekcji}
+\end{algorithm}
+Algorytm odpowiedzialny za liczenie metodą bijekcji miejsc zerowych dla zadanych funckji opiera się na fakcie, że jeśli na dwóch końcach przedziału znajdują się wartości o różnych znakach to funkcja musiała przynajmniej raz przeciąć oś X i co za tym idzie w tym zbiorze musi znajdować się przynajmniej jedno miejsce zerowe. Na samym początku algorytmu jest to sprawdzane, aby się upewnić, że dla danych startowych mamy przynajmniej jeden przypadek, który spełni warunki bycia miejscem zerowym. W przeciwnym razie zwracamy wynik z komunikatem o błędzie ($err=1$). Jeśli już mamy zagwarantowane, że w przedziale znajduje się miejsce zerowe, to w nieskończonej pętli sprawdzamy czy element przedziału oddalony  o $\frac{1}{4}$ odległości między końcami obecnego przedziału od początku przedziału spełnia warunki miejsca zerowego. Jeśli tak to kończymy pracę algorytmu zwracając owy punkt, ilość iteracji oraz komunikat, że błąd nie wystąpił ($err=0$). W innym przypadku sprawdzamy czy wartość otrzymana z naszego punktu oraz wartość funkcji na początku przedziału mają różne znaki, jeśli tak, to ustawiamy koniec przedziału na owym punkcie, w przeciwnym razie ustawiamy początek przedziału w naszym punkcie. Niezależnie od wyniku zminiejsza nam to przedział, zbliżając nas do wyniku.\\
+%wyniki
+\subsection{Testy}
+Testy dla powyższej funkcji były przeprowadzane w następujący sposób:
+wartości uzyskane przez funkcje były porównywane do prawdziwych, pamiętając o dokładności obliczeń, która wynosiła: $10.0^{-5}$. Aby zdać test, funkcja musiała być w odległości dokładności od prawdziwego wyniku.
+\begin{enumerate}
+\item Test 1: $f(x)=x$\\
+Wynik właściwy:
+$$(0.0, 0.0, 1, 0)$$
+Otrzymany wynik:
+$$(0.0, 0.0, 1, 0)$$
+Test zdany
+\item Test 2: $f(x)=log(x)$\\
+Wynik właściwy:
+$$(1.0, 0.0, 1, 0)$$
+Otrzymany wynik:
+$$(0.9999923706054688, -7.629423635228488e-6, 17, 0)$$
+Test zdany
+\item Test 3: $f(x)=e^x-1$\\
+Wynik właściwy:
+$$(0.0, 0.0, 1, 0)$$
+Otrzymany wynik:
+$$(0.0, 0.0, 1, 0)$$
+Test zdany
+\item Test 4: $f(x)=\frac{1}{x}-2)$\\
+Wynik właściwy:
+$$(0.5, 0.0, 1, 0)$$
+Otrzymany wynik:
+$$(0.49999847412109377, 6.103534251344911e-6, 16, 0)$$
+Test zdany
+
+\end{enumerate}
+
+\end{homeworkProblem}
+
+%----------------------------------------------------------------------------------------
+%	PROBLEM 2
+%----------------------------------------------------------------------------------------
+
+\begin{homeworkProblem}
+%opis problemu
+\subsection{Opis problemu}
+Celem zadania było stworzenie funkcji, która będzie w stanie znajdować miejsca zerowe metodą stycznych (Newtona).
+%opis rozwiązania
+\subsection{Opis rozwiązania}
+\begin{algorithm}[H]
+ \SetKwInput{KwData}{Dane}
+ \KwData{
+ \\f - funkcja dla, której szukamy miejsca zerowego\\
+ f' - pochodna powyższej funkcji\\
+ $x_0$ - przybliżene początkowe\\
+ delta,epsilon - dokładność obliczeniowa\\
+ maxit - maksymalna liczba iteracji\\
+ }
+ \SetKwInput{KwResult}{Wynik}
+ \KwResult{
+	(r,v,ut,err)\\ 
+	r - przybliżennie pierwsiastka\\
+	v- wartość funkcji w punkcie r\\
+	it - liczba iteracji\\
+	err - jeśli err=1 to wiemy, że nie osiągnięto wyniku w podanej liczbie iteracji,\\
+	natomiast jeśli err=2 to wiemy, że pochodna jest bliska zeru\\
+ }
+ \SetKwInput{TitleOfAlgo}{Funkcja}
+ \TitleOfAlgo{mstycznych($f,f',x0::Float64, delta::Float64, epsilon::Float64, maxit::Int$)}
+ $v \leftarrow f(x_0)$\;
+ $x_1 \leftarrow 0$\;
+ \If{$|v|<epsilon$}{
+ 	\KwRet{$x_0, v, 0, 0$}
+ }
+ \If{$|f'(x_0)|<epsilon$}{
+ 	\KwRet{$x_0, v, 0, 2$}
+ }
+ \For{$k$ in $1:maxit$}{
+  $x_1 \leftarrow x_0-v/f(x_0)$\;
+  $v \leftarrow f(x_1)$\;
+
+  \If{$|x_1-x_0|<delta$ or $|v|<epsilon$}{
+   		\KwRet{$x_1, v, k, 0$}
+   }
+   \If{$|f'(x_1)|<epsilon$}{
+  	\KwRet{$x_1, v, k, 2$}
+  }
+  $x_0 \leftarrow x_1$\;
+ }
+ \KwRet{$x_1, v, maxit, 1$}
+ \caption{Metoda Stycznych}
+\end{algorithm}
+Powyższy algorytm korzysta nie tylko z funkcji, ale również jej pochodnej. Kluczowe dla działania samego algorytmu jest, aby owa pochodna nie była bliska 0. Jest to sprawdzane na początku algorytmu jak i w pętli for. W przeciwnym razie, program zwraca wynik oraz informację o błędzie ($err=2$). Kolejną rzeczą sprawdzaną na samym początku jak i w każdej iteracji jest czy nie zaistniała sytuacja, że wartość bezwzględna z wartości funkcji w punkcie jest mniejsza niż nasz epsilon lub czy odległość między kolejnymi przybliżeniami funkcji nie jest mniejsza niż naszej delty. W takiej sytuacji kończymy pracę algorytmu i zwracamy poprawny wynik bez informacji o błędzie ($err=0$) w przeciwnym razie obliczamy kolejne $x_1$ oraz wartość funkcji w tym punkcie. $x_1$ otrzymujemy korzystająć z linearyzacji szeregu Taylora ($f(x)\approx f(x_n)+f'(x_n)(x-x_n)$). Stąd $x_1=x_0-v/f(x_0)$. Jeśli nie uda nam się znaleźć odpowiedniego wyniku w ilości iteracji podanych przez użytkownika program zwróci aktualnie wyliczany wynik z informacją o błędzie ($err=1$).
+\newpage
+%wyniki
+\subsection{Testy}
+Testy dla powyższej funkcji były przeprowadzane w następujący sposób:
+wartości uzyskane przez funkcje były porównywane do prawdziwych, pamiętając o dokładności obliczeń, która wynosiła: $10.0^{-5}$. Aby zdać test, funkcja musiała być w odległości dokładności od prawdziwego wyniku.
+\begin{enumerate}
+\item Test 1: $f(x)=x$\\
+Wynik właściwy:
+$$(0.0, 0.0, 1, 0)$$
+Otrzymany wynik:
+$$(0.0, 0.0, 1, 0)$$
+Test zdany
+\item Test 2: $f(x)=log(x)$\\
+Wynik właściwy:
+$$(1.0, 0.0, 1, 0)$$
+Otrzymany wynik:
+$$(0.9999999986897259, -1.3102741122907727e-9, 5, 0)$$
+Test zdany
+\item Test 3: $f(x)=e^x-1$\\
+Wynik właściwy:
+$$(0.0, 0.0, 1, 0)$$
+Otrzymany wynik:
+$$(1.8993899755532367e-8, 1.8993900008368314e-8, 5, 0)$$
+Test zdany
+\item Test 4: $f(x)=\frac{1}{x}-2)$\\
+Wynik właściwy:
+$$(0.5, 0.0, 1, 0)$$
+Otrzymany wynik:
+$$(0.49999968614491325, 1.2554211350490618e-6, 6, 0)$$
+Test zdany
+\end{enumerate}
+
+\end{homeworkProblem}
+\newpage
+%----------------------------------------------------------------------------------------
+%	PROBLEM 3
+%----------------------------------------------------------------------------------------
+
+% To have just one problem per page, simply put a \clearpage after each problem
+
+\begin{homeworkProblem}
+%opis problemu
+\subsection{Opis problemu}
+Celem zadania było stworzenie funkcji, która będzie w stanie znajdować miejsca zerowe metodą siecznych.
+%opis rozwiązania
+\subsection{Opis rozwiązania}
+\begin{algorithm}[H]
+ \SetKwInput{KwData}{Dane}
+ \KwData{
+ \\f - funkcja dla, której szukamy miejsca zerowego\\
+ $x_0,x_1$ - przybliżenia początkowe\\
+ delta,epsilon - dokładność obliczeniowa\\
+ maxit - maksymalna liczba iteracji
+ }
+ \SetKwInput{KwResult}{Wynik}
+ \KwResult{
+	(r,v,ut,err)\\ 
+	r - przybliżennie pierwsiastka\\
+	v- wartość funkcji w punkcie r\\
+	it - liczba iteracji\\
+	err - jeśli err=1 to wiemy, że funkcja nie otrzymała poprawnego wyniku w podanjej liczbie iteracji\\
+ }
+ \SetKwInput{TitleOfAlgo}{Funkcja}
+ \TitleOfAlgo{msiecznych($f, x_0::Float64, x_1::Float64, delta::Float64, epsilon::Float64, maxit::Int$)}
+ $f_a \leftarrow f(x_0)$\;
+ $f_b \leftarrow f(x_1)$\;
+
+ \For{$k$ in $1:maxit$}{
+ \If{$|f_a|<|f_b|$}{
+  	$x_0 \leftrightarrow x_1$\;
+    $f_a \leftrightarrow f_b$\;
+  }
+  $s\leftarrow (x_1-x_0)/(f_b-f_a)$\;
+  $x_1 \leftarrow x_0$\;
+  $f_b \leftarrow f_a$\;
+  $x_0 \leftarrow x_0-f_a*s$\;
+  $f_a \leftarrow f(x_0)$\;
+  \If{$|x_1-x_0|<delta$ or $|w|<epsilon$}{
+  	\KwRet{$x_0, f_a, k, 0$}
+  }
+ }
+ \KwRet{$x_0, f_a, maxit, 1$}
+ \caption{Metoda Siecznych}
+\end{algorithm}
+Warunkami końcowymi tego algorytmu, tak samo jak poprzednim, jest sytuacja w której różnica kolejnych przybliżeń czy wartość funkcji w punkcie jest mniesza od podanej przez użytkownika dokładności. W taki przypadku zwracamy odpowiednie wartości wraz z informacją, że nie zaistniał żadne błąd ($err=0$). Jest to sprawdzane pod koniec każdej iteracji. Ważne dla samego algorytmu jest, aby wartość $f(x_0)$ była mniejsza od wartości $f(x_1)$, w przeciwnym razie zamieniamy $x_0$ z $x_1$ jak i wartości funkcji w punkcie. Zastępujemy $x_1$ $x_0$ oraz wartości funkcji im odpowadające, a następnie liczmy nowe przybliżenie $x_0$ podobnie jak w 2 algorytmie, jendak zastępujemy samą pochodną jej przybliżeniem ($f'(x)=\frac{(f(x_1)-f(x_0)}{x_1-x_0}$).
+Jeśli nie uda nam się w podanej liczbie iteracji uzyskać satysfakcjonującego wyniku zwracamy aktualny punkt i wartość funckji wraz z informacją o błędzie ($err=1$).
+\newpage
+%wyniki
+\subsection{Testy}
+Testy dla powyższej funkcji były przeprowadzane w następujący sposób:
+wartości uzyskane przez funkcje były porównywane do prawdziwych, pamiętając o dokładności obliczeń, która wynosiła: $10.0^{-5}$. Aby zdać test, funkcja musiała być w odległości dokładności od prawdziwego wyniku.
+\begin{enumerate}
+\item Test 1: $f(x)=x$\\
+Wynik właściwy:
+$$(0.0, 0.0, 1, 0)$$
+Otrzymany wynik:
+$$(0.0, 0.0, 1, 0)$$
+Test zdany
+\item Test 2: $f(x)=log(x)$\\
+Wynik właściwy:
+$$(1.0, 0.0, 1, 0)$$
+Otrzymany wynik:
+$$(1.0, 0.0, 1, 0)$$
+Test zdany
+\item Test 3: $f(x)=e^x-1$\\
+Wynik właściwy:
+$$(0.0, 0.0, 1, 0)$$
+Otrzymany wynik:
+$$(-1.7597132702349165e-6, -1.7597117218937086e-6, 6, 0)$$
+Test zdany
+\item Test 4: $f(x)=\frac{1}{x}-2)$\\
+Wynik właściwy:
+$$(0.5, 0.0, 1, 0)$$
+Otrzymany wynik:
+$$(0.49999997304005334, 1.0783979265127641e-7, 11, 0)$$
+Test zdany
+\end{enumerate}
+
+\end{homeworkProblem}
+
+%----------------------------------------------------------------------------------------
+%	PROBLEM 4
+%----------------------------------------------------------------------------------------
+
+% To have just one problem per page, simply put a \clearpage after each problem
+
+\begin{homeworkProblem}
+%opis problemu
+\subsection{Opis problemu}
+Znaleźć pierwiastek równania $\sin(x)-(\frac{1}{2}x)^2=0$ używając wcześniejszych funkcji z danymi parametrami:
+\begin{enumerate}  
+\item Metoda bisekcji: $a=1.5$, $b=2$, $delta= \frac{1}{2}10^{-5}$, $epsilon=\frac{1}{2}10^{-5}$
+\item Metoda stycznych: $x_0=1.5$, $delta= \frac{1}{2}10^{-5}$, $epsilon=\frac{1}{2}10^{-5}$
+\item Metoda siecznych: $x_0=1$, $x_1=2$, $delta= \frac{1}{2}10^{-5}$, $epsilon=\frac{1}{2}10^{-5}$
+\end{enumerate}
+%opis rozwiązania
+\subsection{Opis rozwiązania}
+Skorzystać z modułu zawierającego wymagane funckjie i uruchomić wyżej wymienione funkcje.
+%wyniki
+\subsection{Wyniki}
+Wykres funkcji podanej w zadaniu:
+\begin{center}
+\begin{tikzpicture}
+\begin{axis}[
+	axis lines = middle, 
+	scaled ticks=false,
+	axis equal,
+	grid=major,
+	xmax=2.5,xmin=-0.2,
+    xlabel = $x$,
+    ylabel = $y$,
+]
+\addplot [
+    domain=-0.2:2.5, 
+    samples=100, 
+    color=red,
+]
+{sin(deg(x))-(1/2*x)^2};
+
+
+\end{axis}
+\end{tikzpicture}
+\end{center}
+Łatwo da się zauważyć, że poprawne miejsca funkcji występują dla $x=0$ i $x\approx1.93375$
+\begin{enumerate}  
+\item Wyniki dla metody bisekcji:
+$$(1.8490753173828125, 8.122459775883328e-7, 15, 0)$$
+\item Wyniki dla metody stycznych:
+$$(1.8490708096067412, 3.2225622041970325e-6, 18, 0)$$
+\item Wyniki dla metody siecznych:
+$$(1.8490764424334614, 2.106764848130993e-7, 5, 0)$$
+\end{enumerate}
+%wnioski
+\subsection{Wnioski}
+Łatwo da się zauważyć, że każda metoda poradziła sobie z policzeniem miejsca pierwiastka danego równania, jednak uczyniły one to z błędęm $\delta\approx4\%$.Same wartości funkcji $f(r)$ również nie są idealnie równe 0, jednak są mniejsze od zadanej precyzji, spełniając nasze oczekiwania.\\ Błąd, omawiany powyżej, wynika z faktu, że wartość w punkcie zwróconym przez naszą funkcje jest mniejsza od naszej precyzji, przez co funkcja kończy swoje działanie. Aby uzyskać bardziej precyzyjne wyniki musimy zwiększyć precyzję zadaną funkcji, jednak należy pamiętać o ograniczeniach $Float64$. Warto jeszcze zauważyć, że pod względem iteracji najlepiej poradziła sobie metoda siecznych wykonując trzy razy mniej iteracji niż kolejna metoda.
+\end{homeworkProblem}
+
+%----------------------------------------------------------------------------------------
+%	PROBLEM 5
+%----------------------------------------------------------------------------------------
+
+% To have just one problem per page, simply put a \clearpage after each problem
+
+\begin{homeworkProblem}
+%opis problemu
+\subsection{Opis problemu}
+Metodą bisekcji znaleźć wartości zmiennej x, dla której wykresy funckji $f(x)=3x$ oraz $g(x)=e^x$ przecinają się, to znaczy, że zachodzi równość $f(x)=g(x)$.
+%opis rozwiązania
+\subsection{Opis rozwiązania}
+Aby rozwiązać ten problem rozważmy nową fukncję $h(x)=f(x)-g(x)=3x-e^x$. 
+Miejsca zerowe funkcji $h(x)$ będą również miejscami, w których funkcje $f(x)$ i $g(x)$ się przecinają.\\~\\
+Wykres funkcji $f(x)$ i $g(x)$:
+\begin{center}
+\begin{tikzpicture}
+\begin{axis}[
+	axis lines = middle, 
+	scaled ticks=false,
+	axis equal,
+	grid=major,
+	xmax=1.6,xmin=0.3,
+    xlabel = $x$,
+    ylabel = $y$,
+]
+\addplot [
+    domain=0.3:1.7, 
+    samples=100, 
+    color=red,
+]
+{3*x};
+
+\addplot [
+    domain=0.3:1.7, 
+    samples=100, 
+    color=blue,
+]
+{e^x};
+\end{axis}
+\end{tikzpicture}
+\end{center}
+
+Wykres funkcji $h(x)$:
+\begin{center}
+\begin{tikzpicture}
+\begin{axis}[
+	axis lines = middle, 
+	scaled ticks=false,
+	axis equal,
+	grid=major,
+	xmax=1.6,xmin=0.5,
+    xlabel = $x$,
+    ylabel = $y$,
+]
+\addplot [
+    domain=0.5:1.7, 
+    samples=100, 
+    color=red,
+]
+{3*x-e^x};
+\end{axis}
+\end{tikzpicture}
+\end{center}
+Miejscami w których przecinają się funkcje $f(x)$ i $g(x)$, jak i miejscami zerowymi funkcji $h(x)$ są: $x\approx0.619061$ i $x\approx1.51213$.\\
+Aby jednak rozwiązać zadanie użyjemy stworzonej przez nas funkcji $mbisekcji$.
+%wyniki
+\subsection{Wyniki}
+Aby uzyskać poniższe wyniki, funkcja została włączona w pętli i sprawdzamy, czy uzyskany wynik nie ma flagi błędu, jeśli nie to jest to potencjalna odpowiedź.\\
+Wyniki:
+$$(0.6190185546875, -4.883657026022448e-5, 13, 0)$$
+$$(1.51214599609375, -1.7583570236290313e-5, 14, 0)$$
+%wnioski
+\subsection{Wnioski}
+Błąd uzyskanych wyników to $\delta_1\approx6.8564*10^{-5}$ i $\delta_2\approx1.0579*10^{-5}$, więc uzyskane wyniki są wiarygodne.\\
+Aby uzyskać powyższe wyniki musimy wybrać $a=0$ i $b=1$ oraz $a=1$ i $b=2$
+\end{homeworkProblem}
+
+
+%----------------------------------------------------------------------------------------
+%	PROBLEM 6
+%----------------------------------------------------------------------------------------
+
+% To have just one problem per page, simply put a \clearpage after each problem
+
+\begin{homeworkProblem}
+%opis problemu
+\subsection{Opis problemu}
+\begin{enumerate} 
+\item Znaleźć miejsca zerowe funkcji $f_1(x)=e^{1-x}-1$ oraz $f_2(x)=xe^{-x}$ za pomocą funckji z zadań 1-3. Dokładność obliczeń: $delta=10^{-5}$ i $epsilon=10^{-5}$.
+\item Przeprowadzić eksperyment: w metodzie stycznych dla $f_1(x)$ zastosować $x_0>1$ i dla $f_2(x)$ sprawdzić $x_0=1$ oraz $x_0>1$.
+\end{enumerate} 
+%opis rozwiązania
+\subsection{Opis rozwiązania}
+Kluczowe dla rozwiązania zadania było wybranie odpowiednich danych startowych, co udało się dzięki narysowaniu wykresów funkcji.\\
+Wykres dla $f_1(x)=e^{1-x}-1$:
+\begin{center}
+\begin{tikzpicture}
+\begin{axis}[
+	axis lines = middle, 
+	scaled ticks=false,
+	axis equal,
+	grid=major,
+	xmax=1.6,xmin=0.5,
+    xlabel = $x$,
+    ylabel = $y$,
+]
+\addplot [
+    domain=0.5:1.7, 
+    samples=100, 
+    color=red,
+]
+{e^(1-x)-1};
+\end{axis}
+\end{tikzpicture}
+\end{center}
+Wykres dla $f_2(x)=xe^{-x}$:
+\begin{center}
+\begin{tikzpicture}
+\begin{axis}[
+	axis lines = middle, 
+	scaled ticks=false,
+	axis equal,
+	grid=major,
+	xmax=1,xmin=-0.5,
+    xlabel = $x$,
+    ylabel = $y$,
+]
+\addplot [
+    domain=-0.5:1, 
+    samples=100, 
+    color=red,
+]
+{x*e^(-x)};
+\end{axis}
+\end{tikzpicture}
+\end{center}
+
+%wyniki
+\subsection{Wyniki}
+\begin{enumerate} 
+\item
+Metoda Bisekcji $f_1(x)=e^{1-x}-1$:
+$$(0.9999923706054688, 7.629423635080457e-6, 17, 0)$$
+Metoda Bisekcji $f_2(x)=x*e^{-x}$:
+$$(0.0, 0.0, 1, 0)$$
+Metoda Stycznych $f_1(x)=e^{1-x}-1$:
+$$(0.9999922654776594, 7.734552252003368e-6, 5, 0)$$
+Metoda Stycznych $f_2(x)=x*e^{-x}$:
+$$(-3.0642493416461764e-7, -3.0642502806087233e-7, 5, 0)$$
+Metoda Siecznych $f_1(x)=e^{1-x}-1$:
+$$(0.9999990036367258, 9.963637706000839e-7, 7, 0)$$
+Metoda Siecznych $f_2(x)=x*e^{-x}$:
+$$(1.744165849924562e-8, 1.7441658195034172e-8, 18, 0)$$
+\item
+Metoda Stycznych $f_1(x)=e^{1-x}-1$ dla $x_0$ nie wiele większego od $1$:
+$$(0.9999996427095682, 3.572904956339329e-7, 54, 0)$$
+Metoda Stycznych $f_1(x)=e^{1-x}-1$ dla $x_0$ większego od $1$:
+$$(30.0, -0.9999999999997456, 0, 2)$$
+Metoda Stycznych $f_2(x)=x*e^{-x}$ dla $x_0>1$
+$$(14.398662765680003, 8.036415344217211e-6, 10, 2)$$
+Metoda Stycznych f(x)=x*exp(-x) dla $x_0$ znacząco większego od $1$:
+$$(20.0, 4.122307244877116e-8, 0, 0)$$
+Metoda Stycznych $f_2(x)=x*e^{-x}$ dla $x_0=1$:
+$$(1.0, 0.36787944117144233, 0, 2)$$
+\end{enumerate}
+%wnioski
+\subsection{Wnioski}
+\end{homeworkProblem}
+\begin{enumerate} 
+\item Łatwo da się zauważyć, że dla odpowiednich danych startowych podane funkcje dość precyzyjnie wyliczają miejsca zerowe. Błąd względny jest w miarę niewielki, a wartości $f_1(x)$ jak i $f_2(x)$ są zbliżone do 0 na tyle na ile pozwala precyzja przez nas podana.
+\item W drugiej części zadania sprawy zaczynają się komplikować. Gdy będziemy rozpatrywać $f_1$ to w przypadku gdy nasze $x_0$ jest zbliżone do 1, funkcji po wielu iteracjach udaje się policzyć odpowiednie miejsce, jednak gdy znacząco zwiększymy $x_0$ to funkcja zacznie zwracać błąd $2$, co oznacza, że pochodna jest zbliżona do 0 i właściwe działanie funkcji jest uniemożliwione.\\
+Kolejną sytuacją, na którą możemy natrafić w $f_1$, to dla $x_0>8$ i $x_0<13$. W tych ramach program zwraca nam wynik NaN co jest spowodowane faktem, że podnosimy $e$ do dużej potęgi i wyskakujemy za maksymalną wartość $Float64$.\\
+Podobny problem da się zauważyć, jeśli będziemy rozpatrywać $f_2$. Tutaj również nasza pochodna będzie bardzo bliska 0, przez co nie ma znaczenia, czy zaczniemy od 1 czy przesuniemy się daleko od niej, funkcja będzie zwracać błąd 2.\\
+Problemy występujące w drugiej części tego zadania są związane z kształtem naszej funckji i jej pochodnej.
+\end{enumerate}
+
+
+
+%----------------------------------------------------------------------------------------
+
+\end{document}
