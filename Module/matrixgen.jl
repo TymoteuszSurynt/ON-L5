@@ -2,18 +2,16 @@
 module matrixgen
 
 export  matcond, blockmat
-
-
 	function matcond(n::Int, c::Float64)
 		# Function generates a random square matrix A of size n with
-		# a given condition number c.	
+		# a given condition number c.
 		# Inputs:
 		#	n: size of matrix A, n>1
-		#	c: condition of matrix A, c>= 1.0	
+		#	c: condition of matrix A, c>= 1.0
 		#
 		# Usage: matcond (10, 100.0);
 		#
-		
+
         if n < 2
          error("size n should be > 1")
         end
@@ -22,44 +20,42 @@ export  matcond, blockmat
         end
         (U,S,V)=svd(rand(n,n))
         return U*diagm(linspace(1.0,c,n))*V'
-	end # matcond
-
-
-  function blockmat(n::Int, l::Int, ck::Float64, outputfile::String)
+	end # matcon
+	function blockmat(n::Int, l::Int, ck::Float64, outputfile::String)
 		# Function generates a random block sparse matrix A of size n with
 		# a given condition number ck of inner block Ak and it save the output
 		# matrix in a text file.
 		# Inputs:
 		#	n: size of block matrix A, n>3
 		# l: size of inner matrices Ak, n mod l =0 (n is  divisible by l), l>1
-		#	ck: condition of inner matrix Ak, ck>= 1.0	
+		#	ck: condition of inner matrix Ak, ck>= 1.0
 		# outputfile: name of the output text file
 		#
 		# Usage: blockmat(100, 4 ,10.0, "A.txt")
-		#		
+		#
 		#
 		#  the output file format
 	  #  n  l              <--- the size of block matrix A, the size of inner matrices Ak
-		#  i1  j1   A[i1,j1] <--- a non-zero element of block matrix A 
-		#  i2  j2   A[i2,j2] <--- a non-zero element of block matrix A 
-		#  i3  j3   A[i3,j3] <--- a non-zero element of block matrix A 
+		#  i1  j1   A[i1,j1] <--- a non-zero element of block matrix A
+		#  i2  j2   A[i2,j2] <--- a non-zero element of block matrix A
+		#  i3  j3   A[i3,j3] <--- a non-zero element of block matrix A
 		#  ...
 		#  ...
 		#  EOF
 		#
-					
+
     if n < 4
      error("size n should be > 3")
     end
     if l < 2
      error("size l should be > 1")
     end
-		if n%l!=0 
+		if n%l!=0
 			error("n is not divisible by l")
 		end
-					
+
 		nb=div(n,l)
-		Ak=Array{Float64}(l,l)		
+		Ak=Array{Float64}(l,l)
 		open(outputfile, "w") do f
 			println(f, n," ",l)
 			for k in 1:nb
@@ -77,12 +73,8 @@ export  matcond, blockmat
 					 println(f,(k-1)*l+i," ",(k-1)*l-1," ",0.3*rand())
 					 println(f,(k-1)*l+i," ",(k-1)*l," ",0.3*rand())
 				 end
-				end 
+				end
 			end
 		end	 # do
 	end # blockmat
-		
-
- 
-
 end # matrixgen
