@@ -6,4 +6,6 @@
 \contentsline {subsection}{Opis problemu}{7}
 \contentsline {subsection}{Eliminacja Gaussa bez wyboru elementu g\IeC {\l }\IeC {\'o}wnego:}{7}
 \contentsline {subsection}{Eliminacja Gaussa z wyborem elementu g\IeC {\l }\IeC {\'o}wnego:}{10}
-\contentsline {subsection}{Testy}{11}
+\contentsline {subsection}{Testy do\IeC {\l }\IeC {\k a}czone do zadania}{11}
+\contentsline {subsection}{Testy w\IeC {\l }asne}{12}
+\contentsline {subsection}{Wnioski}{15}

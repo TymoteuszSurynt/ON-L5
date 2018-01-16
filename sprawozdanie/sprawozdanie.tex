@@ -133,8 +133,8 @@ Każdy blok zapamiętywany w tablicy ma swoje właściwości pozwalające mu zap
 \begin{enumerate}
 \item komórka zapamiętująca blok $B_k$. Jest ona macierzą o wysokości l (wielkość pojedynczego bloku) oraz o szerokości 2. Taka konstrukcja wynika z faktu, że tylko dwie ostatnie wartości w tym bloku mogą mieć inne wartości niż 0, więc nie ma sensu pamiętania wszystkich
 \item komórka zapamiętująca blok $A_k$. Jest ona macierzą $l \times l$. Niestety w tym bloku każda wartość może być niezerowa i na całości bloku będą prawdopodobnie prowadzone obliczenia dlatego nie ma dużego zysku w próbie optymalizacji miejsca zajmowanego przez ten blok
-\item komórka zapamiętująca blok $C_k$. Jest ona macierzą $l \times l$ wypełnioną na początku samymi zerami. Tutaj celowo nie optymalizuje miejsca zajmowanego przez macierz, mimo że wartości niezerowe znajdują się tylko na przekątnej macierzy. Takie działanie wynika z faktu, że przy liczeniu eliminacji Gaussa z i bez częściowego wyboru elementu głównego korzystam z pozostałych komórek do obliczeń.
-\item przy obliczaniu wektora metodą eliminacji Gaussa z częściowym wyborem elementu głównego występuje tymczasowa komórka, w której zapisywane są odpowiednie liczby w razie, gdyby nastąpiła zamiana wiersza między blokami.
+\item komórka zapamiętująca blok $C_k$. Jest ona macierzą $l \times l$ wypełnioną na początku samymi zerami. Tutaj celowo nie optymalizuje miejsca zajmowanego przez macierz, mimo że wartości niezerowe znajdują się tylko na przekątnej macierzy. Takie działanie wynika z faktu, że przy liczeniu eliminacji Gaussa z i bez częściowego wyboru elementu głównego korzystam z pozostałych komórek do obliczeń
+\item przy obliczaniu wektora metodą eliminacji Gaussa z częściowym wyborem elementu głównego występuje tymczasowa komórka, w której zapisywane są odpowiednie liczby w razie, gdyby nastąpiła zamiana wiersza między blokami
 \end{enumerate}
 
 Funkcje wchodzące w skład modułu blocksys wraz z krótkim opisem i przykładami użycia:
@@ -144,7 +144,7 @@ funkcja odpowiedzialna za importowanie macierzy z pliku. Jej jedynym parametrem 
 Przykład użycia:
 $$result=importMatrix("/home/user/Desktop/ON/Dane16\_1\_1/A.txt")$$
 \item $getError(x, value::Float64, n::Int64)$\\
-funkcja odpowiedzialna za wyliczanie średniego błędu bezwzględnego wektora, jeśli każda jego wartość powinna przyjmować jedną wartość(e.g. 1.0). Funkcja jako parametry przyjmuje wektor x, wartość jaką powinny przyjmować komórki wektora ($value$) oraz wielkość wektora $n$, natomiast zwraca wartość w typie Float64 reprezentującą średni błąd względny.\\
+funkcja odpowiedzialna za wyliczanie średniego błędu bezwzględnego wektora, jeśli każda jego wartość powinna przyjmować jedną wartość(e.g. 1.0). Funkcja jako parametry przyjmuje wektor x, wartość jaką powinny przyjmować komórki wektora ($value$) oraz wielkość wektora $n$, natomiast zwraca wartość w typie Float64 reprezentującą średni błąd bezwzględny.\\
 Przykład użycia:
 $$err=getError(x,1.0,16)$$
 \item $exportVectorNoError(fileLocation, x)$\\
@@ -445,13 +445,17 @@ Zadanie polegało na stworzeniu algorytmu, który efektywnie liczy metodą elimi
  
 \end{algorithm}
 \vspace{3mm}
- Wyżej przedstawiony algorytm działa w myśl algorytmu eliminacji Gaussa tj. w pierwszej kolejności znajduje element na przekątnej macierzy A (Zawsze znajdują się w bloku $A_k$). A następnie znajduje stosunek elementu głównego do kolejnych niezerowych wierszy A i odejmuje od każdego z elementów, wiersza za równo w bloku $A_k$ jaki i $C_k$ oraz wektora b, jego odpowiednik, pomnożony razy wyliczony stosunek, z wiersza z elementem głównym. Na początku kolejnego przebiegu, w sposób opisany wcześniej zeruje obie kolumny bloku $B_k$. Po skończeniu dostanie macierz górno trójkątną z której korzystając ze wzoru: $x_i=\frac{b_i''-a_{i,n}''x_n-\ldots-a_{i,i+1}''x_{i+1}}{a_{i,i}''}$, dla i=n, n-1, \ldots.
+ Wyżej przedstawiony algorytm działa w myśl algorytmu eliminacji Gaussa tj. w pierwszej kolejności znajduje element na przekątnej macierzy A (te elementy zawsze znajdują się w bloku $A_k$). A następnie znajduje stosunek elementu głównego do kolejnych niezerowych wierszy A i odejmuje od każdego z elementów, wiersza za równo w bloku $A_k$ jaki i $C_k$ oraz wektora b, jego odpowiednik, pomnożony razy wyliczony stosunek, z wiersza z elementem głównym. Na początku kolejnego przebiegu, w sposób opisany wcześniej zeruje obie kolumny bloku $B_k$. Po skończeniu dostanie macierz górno trójkątną z której korzystając ze wzoru: $x_i=\frac{b_i''-a_{i,n}''x_n-\ldots-a_{i,i+1}''x_{i+1}}{a_{i,i}''}$, dla i=n, n-1, \ldots.\\ można łatwo policzyć wektor x.
+ Złożoność obliczeniowa: $$O(l^2)+O(\frac{n}{l}*(l+l+l^2)+O(l+l+l^2)+O(l)+O(\frac{n}{l}*(l+l))$$
+\\jako, że l jest stałą, to:\\
+$$O(n)+O(n)=O(n)$$
 \subsection{Eliminacja Gaussa z wyborem elementu głównego:}
- Algorytm użyty do metody eliminacji Gaussa z wyborem elementu głównego jest bardzo podobny do algorytmu opisanego powyżej, więc ominę pseudokod. Główna różnica polega na tym, że za nim wybierzemy element na przekątnej, sprawdzamy inne elementy "pod" nim (czyli niezerowe wartości bloku $A_k$ oraz czasami blok $B_{k+1}$) w celu znalezienia elementu którego wartość bezwzględna będzie największa. Celem tego zabiegu jest zminimalizowanie błędu powstającego podczas dzielenia. Kolejną różnicą jest moment wyliczenia bloku $B_k+1$. Jest on redukowany zaraz przy wykonywaniu obliczeń na dwóch ostatnich kolumnach bloku $A_k$. Ta zmiana jest wymuszona możliwością złej zamiany wierszy przez co w miejscu gdzie powinny już być same 0 pojawi się nie zerowa wartość.
- Samo tworzenie macierzy górno trójkątnej czy liczenie wektora x przebiega dokładnie na tej samej zasadzie co w wcześniej wymienionym algorytmie eliminacji Gaussa bez wyboru elementu głównego.  
- \newpage
+ Algorytm użyty do metody eliminacji Gaussa z wyborem elementu głównego jest bardzo podobny do algorytmu opisanego powyżej, więc ominę pseudokod. Główna różnica polega na tym, że zanim wybierzemy element na przekątnej, sprawdzamy inne elementy "pod" nim (czyli niezerowe wartości bloku $A_k$ oraz czasami elementy bloku $B_{k+1}$) w celu znalezienia elementu którego wartość bezwzględna będzie największa. Celem tego zabiegu jest zminimalizowanie błędu powstającego podczas dzielenia. Kolejną różnicą jest moment wyliczenia bloku $B_k+1$. Jest on redukowany zaraz przy wykonywaniu obliczeń na dwóch ostatnich kolumnach bloku $A_k$. Ta zmiana jest wymuszona możliwością złej zamiany wierszy przez co w miejscu gdzie powinny już być same 0 pojawi się nie zerowa wartość.
+ Samo tworzenie macierzy górno trójkątnej czy liczenie wektora x przebiega dokładnie na tej samej zasadzie co w wcześniej wymienionym algorytmie eliminacji Gaussa bez wyboru elementu głównego.  \\
+  Złożoność obliczeniowa: $$O(n)$$
+	ponieważ n występuje tylko w sumie z innym n, a l jest stałą
 %wyniki
-\subsection{Testy}
+\subsection{Testy dołączone do zadania}
 Czasy oraz błędy względne (jako, że wartość jest równa 1.0 to i bezwzględne) dla wybranych testów z danych testowych pochodzących ze strony internetowej pana prof. Zielińskiego (http://cs.pwr.edu.pl/zielinski/), zakładka Obliczenia Naukowe, lista nr 5.
 \begin{enumerate}
 \item Dla macierzy mającej 16 elementów:
@@ -524,7 +528,130 @@ Błąd:\\
 $$3.9874770152437124e^{-16}$$
 \end{enumerate}
 \end{enumerate}
-Warto dodać, że powyższe wyniki są sumą importowania macierzy i wektora oraz wykonywania samego algorytmu jak i eksportowania wyniku do pliku. Aby uzyskać wyniki samego algorytmu można by odjąć odpowiednie wartości ze statystyk powyżej. Jako, że każda z macierzy jest obarczona podobnym błędem wyniki mimo to da się łatwo i w miarę obiektywnie porównywać.
+Warto dodać, że powyższe wyniki są sumą importowania macierzy i wektora, wykonywania samego algorytmu jak i eksportowania wyniku do pliku. Aby uzyskać wyniki samego algorytmu można by odjąć odpowiednie wartości ze statystyk powyżej. Jako, że każda z macierzy jest obarczona podobnym błędem wyniki mimo to da się łatwo i w miarę obiektywnie porównywać.
+\subsection{Testy własne}
+Aby dalej zbadać zachowanie funkcji przeprowadzono dodatkowe testy z użyciem macierzy, z różnym uwarunkowaniem bloków, generowanych przy użyciu funkcji blockmat. Wszystkie macierze w tych testach miały rozmiar 10000.
+
+\begin{enumerate}
+\item Dla $c_k$=10:
+\begin{enumerate}
+\item Eliminacja Gaussa bez wyboru elementu głównego\\
+Czas:\\\\
+\begin{tabular}{l | r}
+real & 0m 1.065s\\ \hline
+user & 0m 0.993s\\ \hline
+sys & 0m 0.066s\\
+\end{tabular}\\\\
+Błąd:\\
+$$2.817024391532641e^{-15}$$
+\item Eliminacja Gaussa z wyborem elementu głównego\\
+Czas:\\\\
+\begin{tabular}{l | r}
+real & 0m 1.355s\\ \hline
+user & 0m 1.279s\\ \hline
+sys & 0m 0.065s\\
+\end{tabular}\\\\
+
+Błąd:\\
+$$3.6831648841939567e^{-16}$$
+\end{enumerate}
+
+
+\item Dla $c_k=10^2$:
+\begin{enumerate}
+\item Eliminacja Gaussa bez wyboru elementu głównego\\
+Czas:\\\\
+\begin{tabular}{l | r}
+real & 0m 1.046s\\ \hline
+user & 0m 0.968s\\ \hline
+sys & 0m 0.070s\\
+\end{tabular}\\\\\\
+Błąd:\\
+$$1.322600029496357e^{-13}$$
+
+\item Eliminacja Gaussa z wyborem elementu głównego\\
+Czas:\\\\
+\begin{tabular}{l | r}
+real & 0m 1.379s\\ \hline
+user & 0m 1.291s\\ \hline
+sys & 0m 0.076s\\
+\end{tabular}\\\\\\
+Błąd:\\
+$$2.676736610141006e^{-15}$$
+\end{enumerate}
+
+
+\item Dla $c_k=10^5$:
+\begin{enumerate}
+\item Eliminacja Gaussa bez wyboru elementu głównego\\
+Czas:\\\\
+\begin{tabular}{l | r}
+real & 0m 1.046s\\ \hline
+user & 0m 0.977s\\ \hline
+sys & 0m 0.061s\\
+\end{tabular}\\\\
+Błąd:\\
+$$3.157195055392137e^{-11}$$
+
+\item Eliminacja Gaussa z wyborem elementu głównego\\
+\begin{tabular}{l | r}
+real & 0m 1.411s\\ \hline
+user & 0m 1.329s\\ \hline
+sys & 0m 0.071s\\
+\end{tabular}\\\\
+Błąd:\\
+$$2.593390435734477e^{-12}$$
+\end{enumerate}
+
+\item Dla $c_k=10^10$:
+\begin{enumerate}
+\item Eliminacja Gaussa bez wyboru elementu głównego\\
+Czas:\\\\
+\begin{tabular}{l | r}
+real & 0m 1.092s\\ \hline
+user & 0m 1.006\\ \hline
+sys & 0m 0.073s\\
+\end{tabular}\\\\
+Błąd:\\
+$$2.9030699014245488e^{-6}$$
+
+\item Eliminacja Gaussa z wyborem elementu głównego\\
+\begin{tabular}{l | r}
+real & 0m 1.401s\\ \hline
+user & 0m 1.336s\\ \hline
+sys & 0m 0.052s\\
+\end{tabular}\\\\
+Błąd:\\
+$$2.5449254313170135e^{-7}$$
+\end{enumerate}
+
+\item Dla $c_k=10^13$:
+\begin{enumerate}
+\item Eliminacja Gaussa bez wyboru elementu głównego\\
+Czas:\\\\
+\begin{tabular}{l | r}
+real & 0m 1.087s\\ \hline
+user & 0m 1.014s\\ \hline
+sys & 0m 0.060s\\
+\end{tabular}\\\\
+Błąd:\\
+$$0.0045178028780950225$$
+
+\item Eliminacja Gaussa z wyborem elementu głównego\\
+\begin{tabular}{l | r}
+real & 0m 1.349s\\ \hline
+user & 0m 1.260s\\ \hline
+sys & 0m 0.071s\\
+\end{tabular}\\\\
+Błąd:\\
+$$0.0002520045948780372$$
+\end{enumerate}
+\end{enumerate}
+Warto dodać, że powyższe wyniki są sumą importowania macierzy i wektora, wykonywania samego algorytmu jak i eksportowania wyniku do pliku. Aby uzyskać wyniki samego algorytmu można by odjąć odpowiednie wartości ze statystyk powyżej. Jako, że każda z macierzy jest obarczona podobnym błędem wyniki mimo to da się łatwo i w miarę obiektywnie porównywać.
+\subsection{Wnioski}
+Łatwo da się zauważyć, że wybór elementu głównego zapewnia lepsze wyniki, natomiast łatwo też zauważyć, że obliczenia trwają nieco dłużej. Taka wymiana jest opłacalna gdy uwarunkowanie bloków jest duże, przez co błędy popełniane przez brak wyboru elementu głównego stają się coraz większe. Dla małych macierzy lub dobrego uwarunkowania bardziej opłacalna jest opcja bez wyboru elementu głównego, chyba że zależy nam na dokładności do 16 liczb po przecinku. Jak chodzi o wzrost czasu w stosunku do wielkości macierzy, to jest on zauważalny, ale nie porażająco wielki.
+
+Wszystkie testy były przeprowadzane na komputerze wyposażonym w procesor Intel Core i5-6600K CPU @ 3.50GHz x 4 oraz 16GB ramu.
 \end{homeworkProblem}
 \clearpage
 
